@@ -7,6 +7,7 @@ on:
     paths:
       - 'PS4LocalServer-GitHub-Actions.zip'
       - '.github/workflows/android-build.yml'
+      - 'Afterglow-overlay/**'
 
 permissions:
   contents: read
@@ -39,20 +40,10 @@ jobs:
           test -n "$PROJECT_DIR"
           echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
 
-      - name: Fix Kotlin Android text field property
+      - name: Apply Afterglow redesign
         run: |
-          python3 - <<'PY'
-          import os
-          from pathlib import Path
-          p = Path(os.environ["PROJECT_DIR"]) / "app/src/main/java/fr/local/ps4server/MainActivity.kt"
-          s = p.read_text()
-          if "singleLine = true" in s:
-              s = s.replace("singleLine = true", "setSingleLine(true)")
-              p.write_text(s)
-          elif "setSingleLine(true)" not in s:
-              raise SystemExit("singleLine property not found in MainActivity.kt")
-          print("Patched singleLine property:", "setSingleLine(true)" in p.read_text())
-          PY
+          cp -R Afterglow-overlay/. "$PROJECT_DIR"/
+          echo "Afterglow interface, branding and launcher icon applied."
 
       - name: Align Java and Kotlin JVM targets
         run: |
