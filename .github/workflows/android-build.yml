@@ -46,16 +46,12 @@ jobs:
           from pathlib import Path
           p = Path(os.environ["PROJECT_DIR"]) / "app/src/main/java/fr/local/ps4server/MainActivity.kt"
           s = p.read_text()
-          import re
-          lines = s.splitlines()
-          fixed = []
-          for line in lines:
-              m = re.match(r"^(\\s*)singleLine\\s*=\\s*(.*?)(,?)\\s*$", line)
-              if m:
-                  line = f"{m.group(1)}setSingleLine({m.group(2)}){m.group(3)}"
-              fixed.append(line)
-          p.write_text("\\n".join(fixed) + "\\n")
-          print("\\n".join(f"{i+1}: {line}" for i, line in enumerate(fixed) if "SingleLine" in line or "singleLine" in line))
+          if "singleLine = true" in s:
+              s = s.replace("singleLine = true", "setSingleLine(true)")
+              p.write_text(s)
+          elif "setSingleLine(true)" not in s:
+              raise SystemExit("singleLine property not found in MainActivity.kt")
+          print("Patched singleLine property:", "setSingleLine(true)" in p.read_text())
           PY
 
       - name: Align Java and Kotlin JVM targets
