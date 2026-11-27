@@ -47,15 +47,14 @@ jobs:
           unzip -q /tmp/afterglow-source.zip -d /tmp/afterglow-source
           SITE="$PROJECT_DIR/app/src/main/assets/site"
           mkdir -p "$SITE"
-          # The base Android project already contains the patched PS4-HEN
-          # binary. Keep it: the fork's bundled hen.bin has a different hash.
-          cp "$SITE/hen.bin" /tmp/hen.bin.patched
-          echo "6417a84a72f9c7988f0e33b3ae190542  /tmp/hen.bin.patched" | md5sum -c -
           cp -R /tmp/afterglow-source/pwn-*/afterglow/. "$SITE"/
-          cp /tmp/hen.bin.patched "$SITE/hen.bin"
-          sed -i 's/^hen.bin .*/hen.bin #6417a84a72f9c7988f0e33b3ae190542/' "$SITE/cache.appcache"
-          sed -i '2a# Android bundle revision: patched-PS4-HEN-14.00' "$SITE/cache.appcache"
-          echo "Afterglow exploit, hash-verified patched PS4-HEN, GoldHEN and firmware patchsets bundled."
+          # This build is deliberately GoldHEN-only; remove the PS4-HEN binary
+          # and its appcache entry so the unused selector path is not shipped.
+          rm -f "$SITE/hen.bin"
+          if [ -f "$SITE/cache.appcache" ]; then
+            sed -i '/hen\.bin/d' "$SITE/cache.appcache"
+          fi
+          echo "GoldHEN-only Afterglow bundle with firmware 14.02 patchset."
 
       - name: Apply Afterglow Android interface
         run: |
