@@ -33,6 +33,13 @@ class ServerService : Service() {
  private fun startHttpServer(){
   server=object:NanoHTTPD(PORT){
    override fun serve(session:IHTTPSession):Response {
+    if(session.uri=="/config") {
+     val mode=getSharedPreferences("afterglow", MODE_PRIVATE).getString("payload_mode","goldhen") ?: "goldhen"
+     return newFixedLengthResponse(Response.Status.OK,"application/json","{\"mode\":\"$mode\"}").apply {
+      addHeader("Cache-Control","no-store")
+      addHeader("Access-Control-Allow-Origin","*")
+     }
+    }
     val requested=session.uri.trimStart('/').ifBlank{"index.html"}; val target=File(siteRoot,requested).canonicalFile; val base=siteRoot.canonicalFile
     if(target.path!=base.path&&!target.path.startsWith(base.path+File.separator)) return newFixedLengthResponse(Response.Status.FORBIDDEN,"text/plain","Forbidden")
     if(!target.isFile) return newFixedLengthResponse(Response.Status.NOT_FOUND,"text/plain","Not found")
