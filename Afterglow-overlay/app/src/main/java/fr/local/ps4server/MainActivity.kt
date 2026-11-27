@@ -17,7 +17,6 @@ class MainActivity : Activity() {
     private lateinit var statusDot: TextView
     private lateinit var address: TextView
     private lateinit var toggle: TextView
-    private lateinit var goldHenButton: TextView
     private lateinit var ps4HenButton: TextView
     private val prefs by lazy { getSharedPreferences("afterglow", MODE_PRIVATE) }
     private var requestedRunning = false
@@ -46,7 +45,7 @@ class MainActivity : Activity() {
         val brand=LinearLayout(this).apply { orientation=LinearLayout.HORIZONTAL; gravity=Gravity.CENTER_VERTICAL }
         val logo=ImageView(this).apply { setImageResource(R.drawable.afterglow_icon); scaleType=ImageView.ScaleType.CENTER_CROP; background=rounded(panel,18f); clipToOutline=true }
         brand.addView(logo,LinearLayout.LayoutParams(dp(62),dp(62)))
-        val brandText=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL; setPadding(dp(14),0,0,0); addView(label("AFTERGLOW",24f,white,true)); addView(label("PS4 LOCAL HOST  •  FIRMWARE 14.00 – 14.02",10f,muted,true)) }
+        val brandText=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL; setPadding(dp(14),0,0,0); addView(label("AFTERGLOW",24f,white,true)); addView(label("PS4 LOCAL HOST  •  FIRMWARE 14.00",10f,muted,true)) }
         brand.addView(brandText); root.addView(brand)
         root.addView(label("Ton serveur PS4,\ndirectement depuis ton téléphone.",16f,muted).apply { setPadding(0,dp(25),0,dp(22)) })
         val card=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL; setPadding(dp(20),dp(19),dp(20),dp(19)); background=rounded(panel,22f,Color.rgb(45,51,76)) }
@@ -66,34 +65,12 @@ class MainActivity : Activity() {
             setOnClickListener { val u=serverUrl(); val cb=getSystemService(CLIPBOARD_SERVICE) as ClipboardManager; cb.setPrimaryClip(ClipData.newPlainText("Adresse Afterglow",u)); Toast.makeText(this@MainActivity,"Adresse copiée !",Toast.LENGTH_SHORT).show() }
         }
         root.addView(copy,LinearLayout.LayoutParams(-1,dp(54)).apply { topMargin=dp(11) })
-        val modeBox=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL; setPadding(dp(18),dp(16),dp(18),dp(16)); background=rounded(Color.rgb(15,20,36),18f) }
-        modeBox.addView(label("PAYLOAD JAILBREAK",11f,purple,true))
-        modeBox.addView(label("Choisis le HEN qui sera lancé sur ta PS4.",12f,muted).apply { setPadding(0,dp(5),0,dp(12)) })
-        val modeRow=LinearLayout(this).apply { orientation=LinearLayout.HORIZONTAL; gravity=Gravity.CENTER; }
-        goldHenButton=label("GoldHEN",14f,white,true).apply { gravity=Gravity.CENTER; setPadding(dp(8),dp(14),dp(8),dp(14)); setOnClickListener { chooseMode("goldhen") } }
-        ps4HenButton=label("PS4-HEN",14f,white,true).apply { gravity=Gravity.CENTER; setPadding(dp(8),dp(14),dp(8),dp(14)); setOnClickListener { chooseMode("hen") } }
-        modeRow.addView(goldHenButton,LinearLayout.LayoutParams(0,dp(50),1f).apply { rightMargin=dp(6) })
-        modeRow.addView(ps4HenButton,LinearLayout.LayoutParams(0,dp(50),1f).apply { leftMargin=dp(6) })
-        modeBox.addView(modeRow)
-        root.addView(modeBox,LinearLayout.LayoutParams(-1,-2).apply { topMargin=dp(20) })
-        updateModeButtons()
         val info=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL; setPadding(dp(18),dp(16),dp(18),dp(16)); background=rounded(Color.rgb(15,20,36),18f) }
         info.addView(label("COMMENT SE CONNECTER",11f,purple,true))
         info.addView(label("1. Connecte ton téléphone et ta PS4 au même Wi-Fi.\n2. Démarre le serveur Afterglow.\n3. Ouvre l’adresse affichée dans le navigateur de la PS4.",12f,muted).apply { setLineSpacing(dp(4).toFloat(),1f); setPadding(0,dp(10),0,0) })
         root.addView(info,LinearLayout.LayoutParams(-1,-2).apply { topMargin=dp(22) })
         root.addView(label("AFTERGLOW  •  HÉBERGEMENT LOCAL",10f,Color.rgb(93,104,133)).apply { gravity=Gravity.CENTER; setPadding(0,dp(25),0,0) })
         setContentView(scroll)
-    }
-    private fun chooseMode(mode:String) {
-        prefs.edit().putString("payload_mode",mode).apply()
-        updateModeButtons()
-        Toast.makeText(this, if(mode=="goldhen") "GoldHEN sélectionné" else "PS4-HEN sélectionné", Toast.LENGTH_SHORT).show()
-    }
-    private fun updateModeButtons() {
-        if(!::goldHenButton.isInitialized) return
-        val selected=prefs.getString("payload_mode","goldhen") ?: "goldhen"
-        goldHenButton.background=if(selected=="goldhen") gradient() else rounded(Color.rgb(30,37,59),16f,Color.rgb(61,70,102))
-        ps4HenButton.background=if(selected=="hen") gradient() else rounded(Color.rgb(30,37,59),16f,Color.rgb(61,70,102))
     }
     private fun toggleServer() {
         if(requestedRunning) { stopService(Intent(this,ServerService::class.java)); requestedRunning=false }
