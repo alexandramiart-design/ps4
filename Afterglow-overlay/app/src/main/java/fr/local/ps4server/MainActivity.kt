@@ -70,7 +70,7 @@ class MainActivity : Activity() {
             orientation=LinearLayout.VERTICAL
             setPadding(dp(14),0,0,0)
             addView(label("AFTERGLOW",24f,white,true))
-            addView(label("PS4 LOCAL HOST  •  FIRMWARE 14.02",10f,muted,true))
+            addView(label("PS4 LOCAL HOST  •  FIRMWARE 12.00–14.02",10f,muted,true))
         }
         brand.addView(brandText)
         root.addView(brand)
