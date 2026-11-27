@@ -39,6 +39,30 @@ jobs:
           test -n "$PROJECT_DIR"
           echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
 
+      - name: Align Java and Kotlin JVM targets
+        run: |
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+          p = Path(os.environ["PROJECT_DIR"]) / "app" / "build.gradle.kts"
+          s = p.read_text()
+          marker = "    defaultConfig {"
+          block = """    compileOptions {
+                  sourceCompatibility = JavaVersion.VERSION_17
+                  targetCompatibility = JavaVersion.VERSION_17
+              }
+              kotlinOptions {
+                  jvmTarget = "17"
+              }
+          """
+          if marker not in s:
+              raise SystemExit("Impossible de trouver defaultConfig dans app/build.gradle.kts")
+          if "sourceCompatibility = JavaVersion.VERSION_17" not in s:
+              s = s.replace(marker, block + marker, 1)
+              p.write_text(s)
+          print(p.read_text())
+          PY
+
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
