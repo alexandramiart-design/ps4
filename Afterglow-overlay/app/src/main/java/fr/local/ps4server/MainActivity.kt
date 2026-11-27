@@ -18,8 +18,6 @@ class MainActivity : Activity() {
     private lateinit var statusDot: TextView
     private lateinit var address: TextView
     private lateinit var toggle: TextView
-    private lateinit var payloadSummary: TextView
-    private val prefs by lazy { getSharedPreferences("afterglow", MODE_PRIVATE) }
     private var requestedRunning = false
     private val port = ServerService.PORT
     private val bg = Color.rgb(8,11,24)
@@ -72,7 +70,7 @@ class MainActivity : Activity() {
             orientation=LinearLayout.VERTICAL
             setPadding(dp(14),0,0,0)
             addView(label("AFTERGLOW",24f,white,true))
-            addView(label("PS4 LOCAL HOST  •  FIRMWARE 14.00 / 14.02",10f,muted,true))
+            addView(label("PS4 LOCAL HOST  •  FIRMWARE 14.02",10f,muted,true))
         }
         brand.addView(brandText)
         root.addView(brand)
@@ -99,47 +97,6 @@ class MainActivity : Activity() {
         }
         card.addView(address)
         root.addView(card)
-
-        val pickCard=LinearLayout(this).apply {
-            orientation=LinearLayout.VERTICAL
-            setPadding(dp(18),dp(16),dp(18),dp(14))
-            background=rounded(Color.rgb(15,20,36),18f,Color.rgb(45,51,76))
-        }
-        pickCard.addView(label("CHOISIR LE PAYLOAD",11f,purple,true))
-        pickCard.addView(label("Le choix est mémorisé et transmis automatiquement à la PS4.",12f,muted).apply {
-            setPadding(0,dp(6),0,dp(8))
-        })
-        val group=RadioGroup(this).apply { orientation=RadioGroup.VERTICAL }
-        val hen=RadioButton(this).apply {
-            id=1001
-            text="PS4N / PS4-HEN  •  payload hen.bin"
-            textSize=13f
-            setTextColor(white)
-            buttonTintList=android.content.res.ColorStateList.valueOf(purple)
-            setPadding(dp(4),dp(5),0,dp(5))
-        }
-        val gold=RadioButton(this).apply {
-            id=1002
-            text="GoldHEN  •  payload goldhen.bin"
-            textSize=13f
-            setTextColor(white)
-            buttonTintList=android.content.res.ColorStateList.valueOf(green)
-            setPadding(dp(4),dp(5),0,dp(5))
-        }
-        group.addView(hen)
-        group.addView(gold)
-        group.check(if(selectedPayload()=="hen") hen.id else gold.id)
-        group.setOnCheckedChangeListener { _, checkedId ->
-            val mode=if(checkedId==hen.id) "hen" else "goldhen"
-            prefs.edit().putString("payload_mode",mode).apply()
-            updatePayloadSummary()
-            Toast.makeText(this,if(mode=="hen") "PS4-HEN sélectionné" else "GoldHEN sélectionné",Toast.LENGTH_SHORT).show()
-        }
-        pickCard.addView(group)
-        payloadSummary=label("",11f,muted).apply { setPadding(0,dp(5),0,0) }
-        pickCard.addView(payloadSummary)
-        root.addView(pickCard,LinearLayout.LayoutParams(-1,-2).apply { topMargin=dp(16) })
-        updatePayloadSummary()
 
         toggle=label("▶   DÉMARRER LE SERVEUR",14f,Color.WHITE,true).apply {
             gravity=Gravity.CENTER
@@ -169,7 +126,7 @@ class MainActivity : Activity() {
         }
         info.addView(label("COMMENT SE CONNECTER",11f,purple,true))
         info.addView(label(
-            "1. Connecte ton téléphone et ta PS4 au même Wi-Fi.\n2. Démarre le serveur Afterglow.\n3. Ouvre l’adresse affichée dans le navigateur de la PS4.\n4. Le payload choisi ici sera lancé automatiquement.",
+            "1. Connecte ton téléphone et ta PS4 au même Wi-Fi.\n2. Démarre le serveur Afterglow.\n3. Ouvre l’adresse affichée dans le navigateur de la PS4.",
             12f,muted
         ).apply { setLineSpacing(dp(4).toFloat(),1f); setPadding(0,dp(10),0,0) })
         root.addView(info,LinearLayout.LayoutParams(-1,-2).apply { topMargin=dp(22) })
@@ -178,17 +135,6 @@ class MainActivity : Activity() {
             setPadding(0,dp(25),0,0)
         })
         setContentView(scroll)
-    }
-
-    private fun selectedPayload():String =
-        if(prefs.getString("payload_mode","goldhen")=="hen") "hen" else "goldhen"
-
-    private fun updatePayloadSummary() {
-        if(!::payloadSummary.isInitialized) return
-        payloadSummary.text=if(selectedPayload()=="hen")
-            "PS4-HEN sélectionné. Le fichier fourni est corrigé pour le firmware 14.00."
-        else
-            "GoldHEN sélectionné. Payload fourni avec les patchsets Afterglow pour 14.00 et 14.02."
     }
 
     private fun toggleServer() {
