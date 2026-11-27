@@ -77,20 +77,6 @@ class ServerService : Service() {
     private fun startHttpServer() {
         server = object : NanoHTTPD(PORT) {
             override fun serve(session: IHTTPSession): Response {
-                if (session.uri == "/config") {
-                    val saved = getSharedPreferences("afterglow", MODE_PRIVATE)
-                        .getString("payload_mode", "goldhen")
-                    val mode = if (saved == "hen") "hen" else "goldhen"
-                    return newFixedLengthResponse(
-                        Response.Status.OK,
-                        "application/json; charset=utf-8",
-                        "{\"mode\":\"$mode\"}"
-                    ).apply {
-                        addHeader("Cache-Control", "no-store, no-cache, must-revalidate")
-                        addHeader("Access-Control-Allow-Origin", "*")
-                    }
-                }
-
                 val requested = session.uri.trimStart('/').ifBlank { "index.html" }
                 val target = File(siteRoot, requested).canonicalFile
                 val base = siteRoot.canonicalFile
