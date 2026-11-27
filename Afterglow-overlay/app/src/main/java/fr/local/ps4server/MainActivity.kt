@@ -139,7 +139,7 @@ class MainActivity : Activity() {
 
     private fun toggleServer() {
         if(requestedRunning) {
-            stopService(Intent(this,ServerService::class.java))
+            startService(Intent(this,ServerService::class.java).setAction(ServerService.ACTION_STOP))
             requestedRunning=false
         } else {
             startForegroundService(Intent(this,ServerService::class.java).setAction("START"))
