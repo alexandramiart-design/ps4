@@ -39,6 +39,23 @@ jobs:
           test -n "$PROJECT_DIR"
           echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
 
+      - name: Fix Kotlin Android text field property
+        run: |
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+          p = Path(os.environ["PROJECT_DIR"]) / "app/src/main/java/fr/local/ps4server/MainActivity.kt"
+          s = p.read_text()
+          if ".singleLine =" in s:
+              s = s.replace(".singleLine =", ".setSingleLine(")
+              # Complete the setter call on the affected assignment line.
+              lines = s.splitlines()
+              lines = [line + ")" if ".setSingleLine(" in line and not line.rstrip().endswith(")") else line for line in lines]
+              s = "\n".join(lines) + "\n"
+              p.write_text(s)
+          print("\n".join(line for line in p.read_text().splitlines() if "SingleLine" in line or "singleLine" in line))
+          PY
+
       - name: Align Java and Kotlin JVM targets
         run: |
           python3 - <<'PY'
