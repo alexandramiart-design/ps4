@@ -40,10 +40,20 @@ jobs:
           test -n "$PROJECT_DIR"
           echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
 
-      - name: Apply Afterglow redesign
+      - name: Download pinned Afterglow payload and exploit bundle
+        run: |
+          curl -fL --retry 3 "https://codeload.github.com/odiecay/pwn/zip/3007b655a1eb5010b829e8e52c69ad6017071352" -o /tmp/afterglow-source.zip
+          mkdir -p /tmp/afterglow-source
+          unzip -q /tmp/afterglow-source.zip -d /tmp/afterglow-source
+          SITE="$PROJECT_DIR/app/src/main/assets/site"
+          mkdir -p "$SITE"
+          cp -R /tmp/afterglow-source/pwn-*/afterglow/. "$SITE"/
+          echo "Afterglow exploit, patched hen.bin, goldhen.bin and per-firmware patchsets bundled."
+
+      - name: Apply Afterglow Android interface
         run: |
           cp -R Afterglow-overlay/. "$PROJECT_DIR"/
-          echo "Afterglow interface, branding and launcher icon applied."
+          echo "Android payload selector and local payload routing applied."
 
       - name: Align Java and Kotlin JVM targets
         run: |
