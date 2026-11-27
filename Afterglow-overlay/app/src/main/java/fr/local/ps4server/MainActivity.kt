@@ -46,9 +46,9 @@ class MainActivity : Activity() {
         val brand=LinearLayout(this).apply { orientation=LinearLayout.HORIZONTAL; gravity=Gravity.CENTER_VERTICAL }
         val logo=ImageView(this).apply { setImageResource(R.drawable.afterglow_icon); scaleType=ImageView.ScaleType.CENTER_CROP; background=rounded(panel,18f); clipToOutline=true }
         brand.addView(logo,LinearLayout.LayoutParams(dp(62),dp(62)))
-        val brandText=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL; setPadding(dp(14),0,0,0); addView(label("AFTERGLOW",24f,white,true)); addView(label("PS4 LOCAL HOST  •  FIRMWARE 14.00",10f,muted,true)) }
+        val brandText=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL; setPadding(dp(14),0,0,0); addView(label("AFTERGLOW",24f,white,true)); addView(label("PS4 LOCAL HOST  •  FIRMWARE 14.00 – 14.02",10f,muted,true)) }
         brand.addView(brandText); root.addView(brand)
-        root.addView(label("Ton serveur PS4,\ndirectement depuis ton téléphone.",16f,muted).apply { setPadding(0,dp(25),0,dp(22)) })
+        root.addView(label("Ton serveur PS4,\\ndirectement depuis ton téléphone.",16f,muted).apply { setPadding(0,dp(25),0,dp(22)) })
         val card=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL; setPadding(dp(20),dp(19),dp(20),dp(19)); background=rounded(panel,22f,Color.rgb(45,51,76)) }
         val line=LinearLayout(this).apply { orientation=LinearLayout.HORIZONTAL; gravity=Gravity.CENTER_VERTICAL }
         statusDot=label("●",16f,Color.rgb(251,191,36),true); line.addView(statusDot)
@@ -79,7 +79,7 @@ class MainActivity : Activity() {
         updateModeButtons()
         val info=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL; setPadding(dp(18),dp(16),dp(18),dp(16)); background=rounded(Color.rgb(15,20,36),18f) }
         info.addView(label("COMMENT SE CONNECTER",11f,purple,true))
-        info.addView(label("1. Connecte ton téléphone et ta PS4 au même Wi-Fi.\n2. Démarre le serveur Afterglow.\n3. Ouvre l’adresse affichée dans le navigateur de la PS4.",12f,muted).apply { setLineSpacing(dp(4).toFloat(),1f); setPadding(0,dp(10),0,0) })
+        info.addView(label("1. Connecte ton téléphone et ta PS4 au même Wi-Fi.\\n2. Démarre le serveur Afterglow.\\n3. Ouvre l’adresse affichée dans le navigateur de la PS4.",12f,muted).apply { setLineSpacing(dp(4).toFloat(),1f); setPadding(0,dp(10),0,0) })
         root.addView(info,LinearLayout.LayoutParams(-1,-2).apply { topMargin=dp(22) })
         root.addView(label("AFTERGLOW  •  HÉBERGEMENT LOCAL",10f,Color.rgb(93,104,133)).apply { gravity=Gravity.CENTER; setPadding(0,dp(25),0,0) })
         setContentView(scroll)
