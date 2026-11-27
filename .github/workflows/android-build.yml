@@ -59,7 +59,13 @@ jobs:
       - name: Apply Afterglow Android interface
         run: |
           cp -R Afterglow-overlay/. "$PROJECT_DIR"/
-          echo "Android payload selector and local payload routing applied."
+          SITE="$PROJECT_DIR/app/src/main/assets/site"
+          # Ship GoldHEN only. Remove PS4-HEN even if it was present in the base archive.
+          rm -f "$SITE/hen.bin"
+          if [ -f "$SITE/cache.appcache" ]; then
+            sed -i '/hen\.bin/d' "$SITE/cache.appcache"
+          fi
+          echo "Original server UI restored; GoldHEN only; firmware 14.02 patchset retained."
 
       - name: Align Java and Kotlin JVM targets
         run: |
